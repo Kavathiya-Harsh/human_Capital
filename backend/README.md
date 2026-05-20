@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="../assets/logo.png" alt="Human Capital Analytics Logo" width="180" style="border-radius: 20px; margin-bottom: 20px;"/>
+<img src="https://raw.githubusercontent.com/priyabratasahoo780/human_capital_project_sahoo_priyabrata/main/assets/logo.png" alt="Human Capital Analytics Logo" width="180" style="border-radius: 20px; margin-bottom: 20px;"/>
 
 # 🌟 Human Capital Analytics | Backend Engine
 
