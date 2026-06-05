@@ -1,30 +1,46 @@
 const mongoose = require("mongoose");
 
-// Connect MongoDB using Mongoose with modern async patterns
+// Connect MongoDB using Mongoose with modern async patterns and cloud fallbacks
 const connectDB = async () => {
-  try {
-    // Select local or production URI dynamically based on environment
-    const uri =
-      process.env.NODE_ENV === "production"
-        ? process.env.MONGODB_URI
-        : process.env.LOCAL_MONGODB_URI || process.env.MONGODB_URI;
+  const localUri = process.env.LOCAL_MONGODB_URI;
+  const atlasUri = process.env.MONGODB_URI;
 
-    if (!uri) {
-      throw new Error(
-        "MongoDB connection string is missing in environment variables",
-      );
+  // In production, force atlas connection
+  if (process.env.NODE_ENV === "production") {
+    if (!atlasUri) {
+      console.error("[❌ Database Error] Production MongoDB URI is missing");
+      process.exit(1);
     }
+    try {
+      const conn = await mongoose.connect(atlasUri);
+      console.log(`[🗄️ Database] Connected to Production MongoDB Atlas: ${conn.connection.host}`);
+      return;
+    } catch (err) {
+      console.error(`[❌ Database Error] Atlas Connection Failed: ${err.message}`);
+      process.exit(1);
+    }
+  }
 
-    const connection = await mongoose.connect(uri);
-
-    // Log connected database host securely without leaking credentials
-    console.log(
-      `[🗄️ Database] MongoDB Connected Successfully: ${connection.connection.host}`,
-    );
-  } catch (error) {
-    // Handle database connection failure gracefully to prevent server crashes
-    console.error(`[❌ Database Error] Connection Failed: ${error.message}`);
-    process.exit(1);
+  // In development, try local first, fallback to atlas if local connection fails
+  try {
+    if (!localUri) throw new Error("Local URI not configured");
+    console.log("[🗄️ Database] Attempting connection to Local MongoDB...");
+    const conn = await mongoose.connect(localUri, { serverSelectionTimeoutMS: 3000 });
+    console.log(`[🗄️ Database] Connected to Local MongoDB: ${conn.connection.host}`);
+  } catch (localErr) {
+    console.warn(`[⚠️ Database Warning] Local MongoDB failed (${localErr.message}). Trying Atlas Cloud...`);
+    if (atlasUri) {
+      try {
+        const conn = await mongoose.connect(atlasUri, { serverSelectionTimeoutMS: 5000 });
+        console.log(`[🗄️ Database] Connected to MongoDB Atlas: ${conn.connection.host}`);
+      } catch (atlasErr) {
+        console.error(`[❌ Database Error] Both Local and Atlas connections failed: ${atlasErr.message}`);
+        process.exit(1);
+      }
+    } else {
+      console.error("[❌ Database Error] Local connection failed and no Atlas URI was provided.");
+      process.exit(1);
+    }
   }
 };
 
