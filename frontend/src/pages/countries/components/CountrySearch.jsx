@@ -34,7 +34,7 @@ const CountrySearch = ({
         boxShadow: cardShadow,
         backgroundColor: 'background.paper',
         border: '1px solid',
-        borderColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+        borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.01)',
       }}
     >
       <Grid container spacing={2} alignItems="center">
