@@ -13,21 +13,319 @@
 [![Redux](https://img.shields.io/badge/Redux_Toolkit-2.1-593D88?style=for-the-badge&logo=redux&logoColor=white)](https://redux-toolkit.js.org/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.3-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://framer.com/motion/)
 
+<br/>
+
+[![Live Deployment](https://img.shields.io/badge/Live_Deployment-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://human-capital-project-sahoo-priyabr.vercel.app/)
+
 > A highly performant client-side application designed to visualize consumer price indices, inflation trends, and macro-economic factors utilizing interactive charting, advanced filtering, and a state-of-the-art Glassmorphic & Neumorphic design system.
 
 ---
 
 </div>
 
+## 🏗️ Full-Stack Frontend System Architecture
+
+The Human Capital Analytics frontend is a fully decoupled, enterprise-grade **React 19 + Vite 8** SPA. The diagram below illustrates the **complete frontend architecture** — from the browser render layer down to the backend API communication:
+
+```mermaid
+graph TB
+    subgraph BROWSER["🌐 Browser — React 19 SPA (Port 5173)"]
+        MAIN["⚛️ main.jsx\n(React DOM Root + Store Provider)"]
+        APP["📱 App.jsx\n(React Router DOM v7 Routes)"]
+    end
+
+    subgraph ROUTING["🛡️ Route Guards (routes/)"]
+        PUB["PublicRoute\n(Redirect if logged in)"]
+        PRIV["PrivateRoute\n(Redirect if no JWT)"]
+        ADMIN_ROUTE["AdminRoute\n(RBAC: admin only)"]
+    end
+
+    subgraph PAGES["📄 Page Layer (pages/)"]
+        LOGIN["🔑 LoginPage"]
+        REGISTER["📝 RegisterPage"]
+        DASHBOARD["📊 DashboardPage"]
+        DATAPAGE["📋 DataPage\n(Price Explorer)"]
+        COUNTRY["🌍 CountryPage"]
+        PROFILE["👤 ProfilePage"]
+        ADMIN_PG["🛠️ AdminPage"]
+        NOTFOUND["❌ NotFoundPage"]
+    end
+
+    subgraph LAYOUT["📐 Layout Layer (layouts/)"]
+        MAINLAYOUT["MainLayout\n(Sidebar + Topbar + Outlet)"]
+        AUTHLAYOUT["AuthLayout\n(Centered form wrapper)"]
+    end
+
+    subgraph COMPONENTS["🧱 Component Layer (components/)"]
+        COMMON["common/\n(Buttons, Modals, Skeletons,\nAlerts, Badges)"]
+        CHARTS["charts/\n(AreaChart, BarChart,\nLineChart, PieChart — Recharts)"]
+        TABLES["tables/\n(DataGrid, Pagination,\nSortable Columns)"]
+        FORMS["forms/\n(Formik + Yup Login,\nRegister, Profile forms)"]
+    end
+
+    subgraph STATE["🧠 State Layer — Redux Toolkit (store/ + features/)"]
+        STORE["Redux Store\n(configureStore)"]
+        AUTH_SLICE["authSlice\n(user, token, isAuthenticated)"]
+        DATA_SLICE["dataSlice\n(prices, filters, pagination)"]
+        UI_SLICE["uiSlice\n(theme, sidebar, loading)"]
+        USER_SLICE["userSlice\n(admin user management)"]
+    end
+
+    subgraph HOOKS["🎣 Custom Hooks (hooks/)"]
+        USE_AUTH["useAuth()\n(session + role checks)"]
+        USE_FETCH["useFetch()\n(GET requests + refetch)"]
+        USE_THEME["useTheme()\n(dark/light toggle)"]
+    end
+
+    subgraph CONTEXT["🎭 Context Layer (context/)"]
+        THEME_CTX["ThemeContext\n(Tailwind .dark/.light sync\n+ MUI palette injection)"]
+    end
+
+    subgraph SERVICES["🔌 Service Layer (services/)"]
+        AXIOS_INST["api.js\n(Axios Instance\nbaseURL: VITE_API_URL)"]
+        REQ_INT["Request Interceptor\n(Inject Bearer token)"]
+        RES_INT["Response Interceptor\n(Retry + 401 Auto-logout)"]
+        LOCAL["localStorage.js\n(Token get/set/clear)"]
+    end
+
+    subgraph BACKEND["⚙️ Backend — Node.js Express (Port 5000)"]
+        API_BACKEND["REST API /api/v1/\n(auth, prices, stats,\ncountries, indicators...)"]
+    end
+
+    MAIN --> APP
+    APP --> ROUTING
+    ROUTING --> PUB & PRIV & ADMIN_ROUTE
+    PUB --> AUTHLAYOUT --> LOGIN & REGISTER
+    PRIV --> MAINLAYOUT --> DASHBOARD & DATAPAGE & COUNTRY & PROFILE
+    ADMIN_ROUTE --> MAINLAYOUT --> ADMIN_PG
+    MAINLAYOUT --> COMPONENTS
+    COMPONENTS --> COMMON & CHARTS & TABLES & FORMS
+    PAGES --> STATE
+    HOOKS --> STATE
+    STATE --> STORE
+    STORE --> AUTH_SLICE & DATA_SLICE & UI_SLICE & USER_SLICE
+    STATE --> SERVICES
+    SERVICES --> AXIOS_INST --> REQ_INT --> RES_INT
+    AXIOS_INST --> LOCAL
+    RES_INT --> API_BACKEND
+    CONTEXT --> THEME_CTX
+
+    classDef browser fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef routing fill:#4c1d95,stroke:#8b5cf6,color:#fff
+    classDef pages fill:#1e40af,stroke:#60a5fa,color:#fff
+    classDef layout fill:#1d4ed8,stroke:#93c5fd,color:#fff
+    classDef components fill:#5b21b6,stroke:#a78bfa,color:#fff
+    classDef state fill:#7c2d12,stroke:#fb923c,color:#fff
+    classDef hooks fill:#0f766e,stroke:#34d399,color:#fff
+    classDef context fill:#854d0e,stroke:#fcd34d,color:#fff
+    classDef services fill:#166534,stroke:#86efac,color:#fff
+    classDef backend fill:#1e293b,stroke:#475569,color:#94a3b8
+
+    class MAIN,APP browser
+    class PUB,PRIV,ADMIN_ROUTE routing
+    class LOGIN,REGISTER,DASHBOARD,DATAPAGE,COUNTRY,PROFILE,ADMIN_PG,NOTFOUND pages
+    class MAINLAYOUT,AUTHLAYOUT layout
+    class COMMON,CHARTS,TABLES,FORMS components
+    class STORE,AUTH_SLICE,DATA_SLICE,UI_SLICE,USER_SLICE state
+    class USE_AUTH,USE_FETCH,USE_THEME hooks
+    class THEME_CTX context
+    class AXIOS_INST,REQ_INT,RES_INT,LOCAL services
+    class API_BACKEND backend
+```
+
+---
+
+## 🎯 Component-Driven Layer Architecture
+
+The frontend enforces strict **Separation of Concerns (SoC)** across 6 distinct layers, flowing from browser entry point down to the API:
+
+```mermaid
+graph LR
+    subgraph L1["Layer 1: Entry"]
+        ENTRY["⚛️ main.jsx\n(DOM Root + Providers)"]
+    end
+    subgraph L2["Layer 2: Routing"]
+        ROUTE["🛣️ App.jsx + routes/\n(React Router v7 + Guards)"]
+    end
+    subgraph L3["Layer 3: Pages & Layouts"]
+        VIEW["📄 pages/ + layouts/\n(Route-level views)"]
+    end
+    subgraph L4["Layer 4: Components"]
+        COMP["🧱 components/\n(Atomic UI + Charts + Tables)"]
+    end
+    subgraph L5["Layer 5: State"]
+        STATE["🧠 store/ + features/\n(Redux Toolkit Slices)"]
+    end
+    subgraph L6["Layer 6: Services"]
+        SVC["🔌 services/api.js\n(Axios + Interceptors)"]
+    end
+
+    ENTRY --> ROUTE --> VIEW --> COMP --> STATE --> SVC
+
+    classDef layer fill:#1e293b,stroke:#475569,color:#f8fafc
+    class ENTRY,ROUTE,VIEW,COMP,STATE,SVC layer
+```
+
+---
+
+## 🔄 Frontend Request Lifecycle Workflow
+
+Every user interaction passes through **8 sequential stages** before the UI updates. This ensures predictable state, clean error handling, and optimized re-renders:
+
+```mermaid
+flowchart TD
+    A["👆 Step 1: User Interaction\ne.g. Click 'Apply Filter' button"]:::step
+    B["⚡ Step 2: React Event Handler\nComponent dispatches Redux thunk action"]:::react
+    C["🧠 Step 3: Redux Thunk Dispatch\ncreateAsyncThunk → pending state set\nLoading spinner shown"]:::state
+    D["🔌 Step 4: Axios Request Interceptor\nInject Bearer token from localStorage\nAttach Authorization header"]:::service
+    E["🌐 Step 5: HTTP Request to Backend\nGET /api/v1/prices?page=1&sort=year\nExpress + JWT middleware validates"]:::network
+    F["✅ Step 6: Response Interceptor\n200 OK → pass to Redux\n401 → auto-logout + redirect /login\n5xx → retry with exponential backoff"]:::service
+    G["🧠 Step 7: Redux State Update\nfulfilled → update store slice\nrejected → set error message"]:::state
+    H["⚛️ Step 8: React Re-render\nuseSelector detects state change\nComponent re-renders with new data"]:::react
+    I["✅ UI Updated\nRecharts chart redraws\nData table repopulates\nToast notification shown"]:::success
+    ERR["🚨 Error Boundary\nNetwork timeout → retry x2\n401 → clear token + /login redirect\n500 → show error toast"]:::error
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+    D -.->|No token found| ERR
+    F -.->|401 Unauthorized| ERR
+    F -.->|5xx Server Error| ERR
+    ERR -.->|Retry or Redirect| A
+
+    classDef step fill:#1e40af,stroke:#3b82f6,color:#fff
+    classDef react fill:#7c3aed,stroke:#a78bfa,color:#fff
+    classDef state fill:#b45309,stroke:#fcd34d,color:#fff
+    classDef service fill:#15803d,stroke:#4ade80,color:#fff
+    classDef network fill:#0e7490,stroke:#67e8f9,color:#fff
+    classDef success fill:#166534,stroke:#86efac,color:#fff
+    classDef error fill:#9f1239,stroke:#fda4af,color:#fff
+```
+
+---
+
+## 👤 User Journey & Page Navigation Flow
+
+```mermaid
+flowchart TD
+    START(["🌐 User visits app"]):::entry
+    AUTH{"🔐 Has valid\nJWT token?"}:::decision
+
+    LOGIN["🔑 /login\nLoginPage\n(Formik + Yup form)"]:::public
+    REGISTER["📝 /register\nRegisterPage\n(Formik + Yup form)"]:::public
+
+    DASH["📊 /dashboard\nDashboard KPI Cards\n+ Area/Bar Charts"]:::private
+    DATA["📋 /data\nPrice Explorer\nSortable + Paginated Grid"]:::private
+    COUNTRY["🌍 /countries/:code\nCountry Profile\nHistorical Trend Charts"]:::private
+    PROFILE["👤 /profile\nUser Profile Settings\nPassword & Avatar update"]:::private
+    ADMIN["🛠️ /admin\nAdmin Panel\nUser Management (RBAC)"]:::admin
+
+    RBAC{"👑 Role =\n'admin'?"}:::decision
+    LOGOUT["🔓 Logout\nClear token + Redux\nRedirect /login"]:::action
+
+    START --> AUTH
+    AUTH -->|No| LOGIN
+    AUTH -->|Yes| DASH
+    LOGIN -->|Success| DASH
+    LOGIN --> REGISTER
+    REGISTER -->|Success| DASH
+    DASH --> DATA & COUNTRY & PROFILE
+    DASH --> RBAC
+    RBAC -->|Yes| ADMIN
+    RBAC -->|No| DASH
+    PROFILE --> LOGOUT
+    ADMIN --> LOGOUT
+
+    classDef entry fill:#1e293b,stroke:#64748b,color:#94a3b8
+    classDef decision fill:#854d0e,stroke:#f59e0b,color:#fff
+    classDef public fill:#1e40af,stroke:#60a5fa,color:#fff
+    classDef private fill:#15803d,stroke:#4ade80,color:#fff
+    classDef admin fill:#9f1239,stroke:#fda4af,color:#fff
+    classDef action fill:#4c1d95,stroke:#a78bfa,color:#fff
+```
+
+---
+
+## 🔐 Authentication Workflow (Frontend)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User as 👆 User
+    participant Form as 📝 Formik Form
+    participant Redux as 🧠 Redux authSlice
+    participant Axios as 🔌 Axios Instance
+    participant API as ⚙️ Backend API
+    participant Store as 💾 localStorage
+
+    Note over User,Store: 🔓 Login Flow
+    User->>Form: Enter email + password → Submit
+    Form->>Form: Yup validates schema client-side
+    Form->>Redux: dispatch(loginUser({ email, password }))
+    Redux->>Axios: POST /api/v1/auth/login
+    Axios->>API: HTTP POST with credentials
+    API-->>Axios: 200 OK { token, user } + Set-Cookie
+    Axios-->>Redux: Resolved with { token, user }
+    Redux->>Store: localStorage.setItem('token', jwt)
+    Redux->>Redux: Set state: isAuthenticated=true, user=payload
+    Redux-->>Form: fulfilled → navigate('/dashboard')
+
+    Note over User,Store: 🛡️ Auto Token Injection (every request)
+    User->>Form: Navigates to /data page
+    Form->>Redux: dispatch(fetchPrices(params))
+    Redux->>Axios: GET /api/v1/prices
+    Axios->>Store: localStorage.getItem('token')
+    Store-->>Axios: Return JWT string
+    Axios->>Axios: config.headers.Authorization = 'Bearer <jwt>'
+    Axios->>API: Authenticated HTTP GET request
+    API-->>Axios: 200 OK + paginated price data
+    Axios-->>Redux: Resolve with data
+    Redux-->>Form: Re-render table with new results
+
+    Note over User,Store: 🚨 Session Expiry / 401 Handling
+    API-->>Axios: 401 Unauthorized (token expired)
+    Axios->>Store: localStorage.removeItem('token')
+    Axios->>Redux: dispatch(logout()) → clear auth state
+    Axios-->>User: Redirect to /login page
+```
+
+---
+
+## 📈 Frontend UI & Business Workflow
+
+The client application provides a highly visual, step-by-step data analysis journey for end-users:
+
+```mermaid
+graph LR
+    A["🔑 Login\n/ RBAC Auth"] --> B["📊 Dashboard\nKPI Overview"]
+    B --> C["🏷️ Select\nIndicator"]
+    C --> D["🔍 Apply\nData Filters"]
+    D --> E["🧠 Redux Thunk\nfetchPrices()"]
+    E --> F["📈 Recharts\nRe-render"]
+    F --> G["📤 Export\n& Share"]
+
+    classDef default fill:#1e293b,stroke:#475569,stroke-width:1px,color:#f8fafc;
+    classDef auth fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff;
+    classDef view fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff;
+    classDef state fill:#d97706,stroke:#b45309,stroke-width:2px,color:#fff;
+    classDef success fill:#059669,stroke:#047857,stroke-width:2px,color:#fff;
+
+    class A auth;
+    class B,C,D view;
+    class E state;
+    class F,G success;
+```
+
+---
+
 ## 🌌 System Capabilities
 
-This application acts as a secure control center for analyzing global economic intelligence. Key client-side modules include:
-
-*   **🔐 Enterprise Authentication**: Safe session management utilizing JWT Access tokens, secure HTTP-only cookies, and client-side route guards supporting multi-level Role-Based Access Control (RBAC).
-*   **📈 Dashboard Viewports**: Real-time KPI summaries (e.g. tracking indicators, country counts, user base volume) integrated with interactive charts for economic indicators.
-*   **📊 Dynamic Data Explorer**: Deep search and paginated data tables featuring server-side pagination, multi-column sorting, and complex category filtering.
-*   **🗺️ Country Profiles**: Dedicated geo-economic tabs containing historical index trends, growth indices, and comparative analytics.
-*   **⚙️ Platform Configuration**: Responsive panel for adjusting credentials, active browser session tracking, and user profile management.
+| Module | Capability | Key Technologies |
+| :--- | :--- | :--- |
+| 🔐 **Enterprise Authentication** | JWT sessions, HTTP-only cookies, multi-level RBAC route guards | JWT, React Router, Redux |
+| 📈 **Dashboard Viewports** | Real-time KPI cards, indicator counts, country volumes, interactive charts | Recharts, Redux, MUI |
+| 📊 **Dynamic Data Explorer** | Server-side pagination, multi-column sorting, complex category filtering | Redux Toolkit, Axios |
+| 🗺️ **Country Profiles** | Geo-economic tabs, historical index trends, growth indices, comparisons | Recharts, Redux |
+| ⚙️ **Platform Configuration** | Credential updates, browser session tracking, user profile management | Formik, Yup, Redux |
+| 🔄 **Comparative Analytics** | Side-by-side country comparisons, yearly trend overlays, distributions | Recharts, Axios |
 
 ---
 
@@ -66,119 +364,97 @@ graph TD
     Store --> UserSlice[userSlice: Admin panel user listings and management operations]
 ```
 
-### Slice Breakdowns & Key Thunks:
-*   `authSlice.js` $\rightarrow$ Manages user sessions. Includes `loginUser` (submits credentials, updates LocalStorage, and stores cookies) and `fetchCurrentUser` (queries profile endpoint).
-*   `dataSlice.js` $\rightarrow$ Manages data tables. Handles `fetchDataset` (coordinates sorting parameters, searches, pagination numbers) and CRUD actions (`createPrice`, `updatePrice`, `deletePrice`).
-*   `uiSlice.js` $\rightarrow$ Coordinates visual states like `sidebarOpen`, theme preferences, and telemetry indicators.
+### Redux Slice Breakdown & Key Thunks
+
+| Slice | State Managed | Key Async Thunks |
+| :--- | :--- | :--- |
+| `authSlice.js` | User profile, JWT token, `isAuthenticated` flag | `loginUser`, `registerUser`, `fetchCurrentUser`, `logoutUser` |
+| `dataSlice.js` | Price records, pagination state, sort/filter params | `fetchPrices`, `createPrice`, `updatePrice`, `deletePrice` |
+| `uiSlice.js` | `sidebarOpen`, theme mode, loading indicators | N/A — synchronous reducers only |
+| `userSlice.js` | Admin user list, role management | `fetchAllUsers`, `updateUserRole`, `deleteUser` |
 
 ---
 
-## 🛡️ Input Validation & Form Libraries
+## 🛡️ Input Validation & Form Schema
 
-Forms are powered by **Formik** and validated client-side with **Yup** schemas to catch invalid entries before hitting API controllers:
+Forms are powered by **Formik** and validated client-side with **Yup** schemas:
 
-<table style="border: none; background: transparent; width: 100%; border-collapse: collapse;">
-  <tr style="border: none; background: transparent;">
-    <td width="40%" style="border: none; vertical-align: top; padding: 12px 16px 12px 0;">
-      <h4 style="color: #ff6038; margin-top: 0;">Validation Criteria</h4>
-      <ul style="padding-left: 20px; color: #94a3b8; font-size: 0.92rem;">
-        <li><strong>Name</strong>: Minimum 2 characters, required.</li>
-        <li><strong>Email</strong>: Valid format structure, required.</li>
-        <li><strong>Password</strong>: Minimum 8 characters, must contain at least 1 lowercase letter, 1 uppercase letter, and 1 number.</li>
-      </ul>
-    </td>
-    <td width="60%" style="border: none; vertical-align: top; padding: 12px 0;">
-      <pre><code class="language-javascript">import * as Yup from 'yup';
+| Field | Rule | Error Message |
+| :--- | :--- | :--- |
+| `name` | Min 2 characters, required | "Name must be at least 2 characters" |
+| `email` | Valid email format, required | "Enter a valid email" |
+| `password` | Min 8 chars + lowercase + uppercase + number | "Password must contain a lowercase/uppercase letter/number" |
+| `role` | Enum: `user` \| `admin` (optional) | "Invalid role value" |
 
+```javascript
 const validationSchema = Yup.object({
-  name: Yup.string()
-    .min(2, 'Name must be at least 2 characters')
-    .required('Name is required'),
-  email: Yup.string()
-    .email('Enter a valid email')
-    .required('Email is required'),
+  name: Yup.string().min(2, 'Name must be at least 2 characters').required('Name is required'),
+  email: Yup.string().email('Enter a valid email').required('Email is required'),
   password: Yup.string()
     .min(8, 'Password must be at least 8 characters')
     .matches(/[a-z]/, 'Password must contain a lowercase letter')
     .matches(/[A-Z]/, 'Password must contain an uppercase letter')
     .matches(/[0-9]/, 'Password must contain a number')
     .required('Password is required'),
-});</code></pre>
-    </td>
-  </tr>
-</table>
+});
+```
 
 ---
 
 ## 🎣 Custom React Hooks
 
-### 🔌 `useFetch` Hook (`hooks/useFetch.js`)
-
-An abstraction utility for read-only HTTP GET requests. It automates query state handling and interfaces directly with our custom Axios configuration:
+| Hook | File | Usage | Returns |
+| :--- | :--- | :--- | :--- |
+| `useAuth()` | `hooks/useAuth.js` | Check session + RBAC role | `{ user, isAuthenticated, role }` |
+| `useFetch()` | `hooks/useFetch.js` | Read-only GET requests | `{ data, loading, error, refetch }` |
+| `useTheme()` | `hooks/useTheme.js` | Dark/light mode toggle | `{ themeMode, toggleTheme }` |
 
 ```javascript
+// Example: useFetch in a component
 const { data, loading, error, refetch } = useFetch('/stats/distribution');
 ```
 
-<div style="background-color: rgba(255,255,255,0.02); border-left: 4px solid #ff6038; padding: 14px 18px; border-radius: 6px; margin: 12px 0;">
-  <strong style="color: #f8fafc; font-size: 0.95rem;">💡 State Hook Variables:</strong>
-  <ul style="margin: 6px 0 0 0; padding-left: 20px; color: #94a3b8; font-size: 0.92rem; line-height: 1.5;">
-    <li><code>data</code>: Stores the parsed backend JSON response payload.</li>
-    <li><code>loading</code>: Boolean flag representing active network transactions.</li>
-    <li><code>error</code>: String message populated on network failures or bad server status responses.</li>
-    <li><code>refetch()</code>: Function to manually trigger database queries (e.g. reload or retry).</li>
-  </ul>
-</div>
+| Return Value | Type | Description |
+| :--- | :---: | :--- |
+| `data` | `any` | Parsed backend JSON response payload |
+| `loading` | `boolean` | `true` while network request is in-flight |
+| `error` | `string \| null` | Error message on failure, `null` on success |
+| `refetch()` | `function` | Manually re-triggers the GET request |
 
 ---
 
-## 🛡️ Token Lifecycle & Network Interceptor
+## 🛡️ Token Lifecycle & Axios Interceptors
 
-The client application abstracts token management inside `services/api.js` using a visual lifecycle pipeline:
+All API communication flows through `services/api.js` with 3 automatic interceptor behaviors:
 
-<table style="border: none; background: transparent; width: 100%; border-collapse: collapse;">
-  <tr style="border: none; background: transparent;">
-    <td style="border: none; padding: 12px 0;">
-      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
-        <div style="background: #2563eb; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
-        <div>
-          <strong style="color: #f8fafc; font-size: 0.98rem;">Bearer Token Injection (Request Interceptor)</strong>
-          <p style="color: #94a3b8; font-size: 0.9rem; margin: 4px 0 8px 0;">Scans local storage cache for active user tokens on every outgoing endpoint request and appends standard credentials header:</p>
-          <pre><code class="language-javascript">config.headers.Authorization = `Bearer ${token}`;</code></pre>
-        </div>
-      </div>
-      <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
-        <div style="background: #059669; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
-        <div>
-          <strong style="color: #f8fafc; font-size: 0.98rem;">Exponential Backoff Retry Pipeline (Response Interceptor)</strong>
-          <p style="color: #94a3b8; font-size: 0.9rem; margin: 4px 0 0 0;">When queries fail due to network timeouts or server outages (5xx status codes), the client executes up to <strong>2 retries</strong> with progressive backoffs (1s, then 2s) before reporting failures.</p>
-        </div>
-      </div>
-      <div style="display: flex; align-items: flex-start; gap: 12px;">
-        <div style="background: #dc2626; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
-        <div>
-          <strong style="color: #f8fafc; font-size: 0.98rem;">Invalid Session Auto-Logout (Response Interceptor)</strong>
-          <p style="color: #94a3b8; font-size: 0.9rem; margin: 4px 0 0 0;">Receiving a <code>401 Unauthorized</code> response wipes all local storage tokens, purges the Redux session store, and redirects the browser session to the <code>/login</code> portal.</p>
-        </div>
-      </div>
-    </td>
-  </tr>
-</table>
+| # | Interceptor | Trigger | Action |
+| :---: | :--- | :--- | :--- |
+| 1 | **Bearer Token Injection** | Every outgoing request | Read `localStorage` → append `Authorization: Bearer <jwt>` header |
+| 2 | **Exponential Backoff Retry** | 5xx server error response | Retry up to **2 times** with 1s → 2s progressive delay before failing |
+| 3 | **Auto-Logout on 401** | `401 Unauthorized` response | Clear `localStorage` → `dispatch(logout())` → redirect to `/login` |
+
+```javascript
+// Request Interceptor — Token Injection
+config.headers.Authorization = `Bearer ${token}`;
+
+// Response Interceptor — 401 Auto-Logout
+if (error.response?.status === 401) {
+  localStorage.removeItem('token');
+  store.dispatch(logout());
+  window.location.href = '/login';
+}
+```
 
 ---
 
 ## 📐 Strict Architectural Principles
 
-To maintain enterprise-grade scalability and extreme code readability, this codebase strictly enforces the following engineering guidelines:
-
-### 1️⃣ The 250-Line Limit
-*   **Mandatory Rule**: No single component file (`.js` or `.jsx`) should exceed **250 lines of code**.
-*   **Decomposition**: If a component's implementation grows beyond 250 lines, it must be modularized by extracting logical blocks into smaller, single-responsibility sub-components within a `/components` subdirectory.
-
-### 2️⃣ Separation of Concerns (SoC)
-*   **Visual Logic**: Kept completely inside presentational views and layout layers.
-*   **State & Side-Effects**: Abstracted entirely into Redux Slices or custom React hooks.
-*   **API Interfacing**: Contained in dedicated client service instances.
+| Principle | Rule | Enforcement |
+| :--- | :--- | :--- |
+| **250-Line Limit** | No `.jsx`/`.js` file may exceed 250 lines | Extract sub-components into `/components` subdirectory |
+| **Separation of Concerns** | Visual logic stays in views; state in Redux; API in services | Code review enforced |
+| **Lean Components** | Components must not contain direct `axios` calls | All API calls via Redux thunks or `useFetch` hook |
+| **Named Exports** | All components use named exports (no default export) | ESLint enforced |
 
 ---
 

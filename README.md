@@ -17,7 +17,7 @@
 [![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://documenter.getpostman.com/view/50839186/2sBXqRiGpA)
 
-[Live Demo](#) · [API Documentation](https://documenter.getpostman.com/view/50839186/2sBXqRiGpA) · [Report Bug](https://github.com/priyabratasahoo780/human_capital_project_sahoo_priyabrata/issues) · [Request Feature](https://github.com/priyabratasahoo780/human_capital_project_sahoo_priyabrata/issues)
+[Live Demo](https://human-capital-project-sahoo-priyabr.vercel.app/) · [API Documentation](https://documenter.getpostman.com/view/50839186/2sBXqRiGpA) · [Report Bug](https://github.com/priyabratasahoo780/human_capital_project_sahoo_priyabrata/issues) · [Request Feature](https://github.com/priyabratasahoo780/human_capital_project_sahoo_priyabrata/issues)
 
 </div>
 
@@ -86,29 +86,211 @@ Unlike standard dashboards, this system utilizes complex **MongoDB Aggregation P
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Full MERN Stack System Design
+
+The platform operates on a **4-tier MERN architecture** spanning the browser, CDN edge network, API server, and MongoDB Atlas cluster. Every component is purpose-built for high-throughput economic analytics at scale:
+
+```mermaid
+graph TB
+    subgraph BROWSER["🌐 Client Tier — React 19 + Vite 8 (Vercel Edge CDN)"]
+        UI["⚛️ React Components\n(Pages + Layouts + Charts)"]
+        REDUX["🧠 Redux Toolkit Store\n(authSlice, dataSlice, uiSlice)"]
+        AXIOSC["🔌 Axios Interceptors\n(JWT inject + retry + 401 logout)"]
+        ROUTER["🛣️ React Router v7\n(PrivateRoute + AdminRoute guards)"]
+        UI <--> REDUX
+        REDUX <--> AXIOSC
+        UI --> ROUTER
+    end
+
+    subgraph CDN["🚀 Hosting & Network Tier"]
+        VERCEL["▲ Vercel Edge CDN\n(Static SPA + API rewrites)"]
+        RENDER["🟢 Render Cloud\n(Node.js API Server)"]
+        AXIOSC -->|"HTTPS /api/v1/*"| VERCEL
+        VERCEL -->|"Proxy → /api/v1/*"| RENDER
+    end
+
+    subgraph API["⚙️ Application Tier — Express 5 (Port 5000)"]
+        direction TB
+        HELMET["🛡️ Helmet\n(HTTP Headers)"]
+        CORS["🌐 CORS\n(Origin whitelist)"]
+        RATE["⏱️ Rate Limiter\n(15 req/15min auth)"]
+        HPP["🔧 HPP Guard"]
+        SANITIZE["🧹 NoSQL Sanitizer"]
+        JWT_MW["🔐 JWT Middleware\n(verifyToken + RBAC)"]
+        ZOD["✅ Zod Validators"]
+        CTRL["🎮 Controllers\n(req/res formatting)"]
+        SVC["🛠️ Services\n(Business logic)"]
+        RENDER --> HELMET --> CORS --> RATE --> HPP --> SANITIZE --> JWT_MW --> ZOD --> CTRL --> SVC
+    end
+
+    subgraph DB["🗄️ Database Tier — MongoDB Atlas"]
+        USERS["👤 users collection"]
+        PRICES["💰 prices collection\n(190,000+ documents)"]
+        COUNTRIES["🌍 countries collection"]
+        INDICATORS["📊 indicators collection"]
+        AGGPIPE["⚡ Aggregation Pipelines\n($match → $group → $sort → $project)"]
+        COMPOUND["🔑 Compound Indexes\n({country:1, year:-1})"]
+        SVC -->|"Mongoose ODM + .lean()"| USERS & PRICES & COUNTRIES & INDICATORS
+        PRICES --> AGGPIPE --> COMPOUND
+    end
+
+    classDef browser fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef cdn fill:#14532d,stroke:#22c55e,color:#fff
+    classDef api fill:#3b0764,stroke:#a855f7,color:#fff
+    classDef db fill:#0c4a6e,stroke:#38bdf8,color:#fff
+
+    class UI,REDUX,AXIOSC,ROUTER browser
+    class VERCEL,RENDER cdn
+    class HELMET,CORS,RATE,HPP,SANITIZE,JWT_MW,ZOD,CTRL,SVC api
+    class USERS,PRICES,COUNTRIES,INDICATORS,AGGPIPE,COMPOUND db
+```
+
+---
+
+## 🔁 Procurement & Analytics Workflow
+
+The **end-to-end Procurement Workflow** maps how a user progresses from authentication through data discovery, filtering, aggregation, and final report export — the complete 8-stage analytical journey:
+
+```mermaid
+flowchart LR
+    S1["🔐 Stage 1\nUser Authentication\n\nRegister / Login\nJWT issued\nRBAC role assigned"]:::stage1
+    S2["📊 Stage 2\nDashboard Entry\n\nKPI Cards load\nGlobal stats render\nIndicator overview"]:::stage2
+    S3["🏷️ Stage 3\nIndicator Selection\n\nBrowse 190k+ records\nSelect CPI / Inflation\nor custom indicator"]:::stage3
+    S4["🌍 Stage 4\nGeo-Filter & Country\n\nSelect country/region\nDate range picker\nMulti-filter applied"]:::stage4
+    S5["⚡ Stage 5\nMongoDB Aggregation\n\n$match → $group\n$sort → $project\nCompound index O log n"]:::stage5
+    S6["📈 Stage 6\nChart Rendering\n\nRecharts re-draws\nArea/Bar/Line charts\nFramer Motion animate"]:::stage6
+    S7["🔄 Stage 7\nComparative Analysis\n\nSide-by-side countries\nYearly trend overlays\nDistribution buckets"]:::stage7
+    S8["📤 Stage 8\nReport & Export\n\nGenerate PDF report\nDownload CSV data\nShare analytics link"]:::stage8
+
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7 --> S8
+
+    classDef stage1 fill:#1e40af,stroke:#3b82f6,color:#fff,rx:12
+    classDef stage2 fill:#0f766e,stroke:#14b8a6,color:#fff,rx:12
+    classDef stage3 fill:#7c3aed,stroke:#a78bfa,color:#fff,rx:12
+    classDef stage4 fill:#b45309,stroke:#f59e0b,color:#fff,rx:12
+    classDef stage5 fill:#15803d,stroke:#22c55e,color:#fff,rx:12
+    classDef stage6 fill:#0e7490,stroke:#22d3ee,color:#fff,rx:12
+    classDef stage7 fill:#9f1239,stroke:#fb7185,color:#fff,rx:12
+    classDef stage8 fill:#4c1d95,stroke:#c4b5fd,color:#fff,rx:12
+```
+
+---
+
+## 🔄 Complete End-to-End Request Lifecycle
+
+The diagram below maps the **exact lifecycle** of every API call — from user interaction through the React UI, CDN proxy, Express security pipeline, MongoDB Atlas, and back to the browser:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User as 👆 User Browser
+    participant React as ⚛️ React + Redux
+    participant Axios as 🔌 Axios Client
+    participant Vercel as ▲ Vercel CDN
+    participant Express as ⚙️ Express API
+    participant MongoDB as 🗄️ MongoDB Atlas
+
+    User->>React: Click 'Apply Filter' (Country: USA, Year: 2023)
+    React->>React: dispatch(fetchPrices({ country, year }))
+    React->>Axios: createAsyncThunk triggers GET /api/v1/prices
+    Axios->>Axios: Inject Authorization: Bearer <JWT>
+    Axios->>Vercel: HTTPS GET /api/v1/prices?country=USA&year=2023
+    Vercel->>Express: Proxy → Render cloud server
+
+    rect rgb(30, 27, 75)
+        Note over Express: 🛡️ Security Pipeline (6 layers)
+        Express->>Express: 1. Helmet — set secure HTTP headers
+        Express->>Express: 2. CORS — validate origin whitelist
+        Express->>Express: 3. Rate Limiter — 100 req/15min check
+        Express->>Express: 4. JWT verify — decode + inject req.user
+        Express->>Express: 5. RBAC check — role: user | admin
+        Express->>Express: 6. Zod validate — sanitize query params
+    end
+
+    Express->>MongoDB: Mongoose.find({ country, year }).lean()
+    MongoDB->>MongoDB: Execute Compound Index {country:1, year:-1}
+    MongoDB-->>Express: Return BSON documents array
+    Express-->>Vercel: 200 OK { success, data, pagination }
+    Vercel-->>Axios: Forward JSON response
+    Axios-->>React: Resolve AsyncThunk → fulfilled
+    React->>React: Update dataSlice store state
+    React-->>User: Recharts re-renders with new data + toast ✅
+```
+
+---
+
+## 🔐 Security Architecture
+
+The platform implements a **Zero-Trust, Defense-in-Depth** security model across both client and server tiers:
 
 ```mermaid
 graph TD
-    A[Client: React/Vite] -->|HTTPS/Axios| B[Nginx/Reverse Proxy]
-    B --> C[Backend: Node/Express]
-    C -->|Middleware| D{Security Layers}
-    D -->|JWT/RBAC| E[Controller Logic]
-    E -->|Mongoose| F[MongoDB Atlas]
-    F -->|Aggregation| E
-    E -->|JSON Response| A
-    subgraph "State Management"
-    A --- G[Redux Toolkit Store]
+    subgraph CLIENT_SEC["🌐 Client-Side Security"]
+        YUPFORM["✅ Yup Schema Validation\n(Client-side form guards)"]
+        ROUTEGUARD["🛡️ Route Guards\n(PrivateRoute / AdminRoute)"]
+        TOKENSTORE["🔑 JWT in localStorage\n(Auto-inject via Axios interceptor)"]
+        AUTOLOGOUT["🚪 Auto Logout\n(401 response → clear token + redirect)"]
+        BACKOFF["🔁 Exponential Backoff\n(5xx retry: 1s → 2s → fail)"]
     end
+
+    subgraph API_SEC["⚙️ API-Side Security"]
+        HELMET2["🛡️ Helmet\n(XSS, CSP, HSTS headers)"]
+        CORS2["🌐 CORS Whitelist\n(Only allowed origins)"]
+        RATELIMIT["⏱️ Rate Limiting\nAuth: 15 req/15min\nData: 100 req/15min\nImport: 5 req/min"]
+        HPP2["🔧 HPP\n(No duplicate query params)"]
+        NOSQLSANITIZE["🧹 NoSQL Sanitizer\n(Strip $ and . keys)"]
+        JWTVERIFY["🔐 JWT Verify\n(RS256 signature check)"]
+        RBACCHECK["👑 RBAC\n(role: user | admin)"]
+        ZODVALIDATE["✅ Zod Schemas\n(Runtime type enforcement)"]
+    end
+
+    subgraph DB_SEC["🗄️ Database Security"]
+        BCRYPT["🔒 BCrypt Hashing\n(10 salt rounds)"]
+        MONGOOSE_VAL["📋 Mongoose Validators\n(Schema-level constraints)"]
+        COMPOUND_IDX["🔑 Indexed Queries\n(No full table scans)"]
+    end
+
+    YUPFORM --> ROUTEGUARD --> TOKENSTORE --> AUTOLOGOUT & BACKOFF
+    HELMET2 --> CORS2 --> RATELIMIT --> HPP2 --> NOSQLSANITIZE --> JWTVERIFY --> RBACCHECK --> ZODVALIDATE
+    ZODVALIDATE --> BCRYPT --> MONGOOSE_VAL --> COMPOUND_IDX
+
+    classDef client fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef api fill:#3b0764,stroke:#a855f7,color:#fff
+    classDef db fill:#0c4a6e,stroke:#38bdf8,color:#fff
+
+    class YUPFORM,ROUTEGUARD,TOKENSTORE,AUTOLOGOUT,BACKOFF client
+    class HELMET2,CORS2,RATELIMIT,HPP2,NOSQLSANITIZE,JWTVERIFY,RBACCHECK,ZODVALIDATE api
+    class BCRYPT,MONGOOSE_VAL,COMPOUND_IDX db
 ```
 
-### Request Lifecycle Flow
+---
 
-1. **Frontend**: Action triggered -> Redux Dispatch -> Axios Interceptor attaches JWT.
-2. **Backend**: Express receives request -> Morgan logs -> Rate Limiter checks.
-3. **Security**: JWT Verification -> RBAC Check (Admin/User).
-4. **Logic**: Controller executes service -> Mongoose performs indexed query/aggregation.
-5. **Response**: Formatted JSON sent back with appropriate HTTP status codes.
+## 📈 Data Analytics Pipeline
+
+When a user triggers an analytics query, the system runs it through a **7-stage MongoDB Aggregation Pipeline** for maximum performance:
+
+```mermaid
+graph LR
+    IN["📨 Incoming\nAPI Request\n(JWT + filters)"]:::input
+    M["🔍 $match Stage\nFilter by country\nindicator + year"]:::match
+    G["📦 $group Stage\nAggregate by _id\n$avg, $min, $max, $sum"]:::group
+    L["🔗 $lookup Stage\nJoin countries +\nindicators collections"]:::lookup
+    S["🔀 $sort Stage\nOrder by year ASC\nor value DESC"]:::sort
+    LIM["✂️ $limit + $skip\nPagination\n(offset / cursor)"]:::limit
+    P["📐 $project Stage\nShape output fields\nRemove _id internals"]:::project
+    OUT["✅ JSON Response\n200 OK to client"]:::output
+
+    IN --> M --> G --> L --> S --> LIM --> P --> OUT
+
+    classDef input fill:#1e40af,stroke:#60a5fa,color:#fff
+    classDef match fill:#7c3aed,stroke:#a78bfa,color:#fff
+    classDef group fill:#0f766e,stroke:#34d399,color:#fff
+    classDef lookup fill:#b45309,stroke:#fcd34d,color:#fff
+    classDef sort fill:#0e7490,stroke:#67e8f9,color:#fff
+    classDef limit fill:#9f1239,stroke:#fda4af,color:#fff
+    classDef project fill:#15803d,stroke:#86efac,color:#fff
+    classDef output fill:#1e293b,stroke:#64748b,color:#94a3b8
+```
 
 ---
 
@@ -208,27 +390,85 @@ Configure the `.env` settings inside their respective root directories to succes
 
 ---
 
-## 🗄️ Database Schema Overview
+## 🗄️ Database Design & Entity Relationship Diagram
 
-### 📈 Price Analysis Schema
+The platform uses a highly normalized **MongoDB schema** enforced via Mongoose ODM. The ERD below shows all 5 collections, their fields, primary/foreign keys, and relationships:
+
+```mermaid
+erDiagram
+    USERS ||--o{ ACTIVITY_LOGS : "generates"
+    USERS ||--o{ PRICES : "creates (admin)"
+    USERS {
+        ObjectId _id PK
+        string name
+        string email UK
+        string password "BCrypt hashed"
+        enum role "admin | user"
+        boolean isVerified
+        string avatar "URL optional"
+        date createdAt
+        date updatedAt
+    }
+
+    ACTIVITY_LOGS {
+        ObjectId _id PK
+        ObjectId user_id FK
+        string action "login|create|delete"
+        string ipAddress
+        string userAgent
+        date timestamp
+    }
+
+    COUNTRIES ||--o{ PRICES : "has"
+    COUNTRIES {
+        ObjectId _id PK
+        string name
+        string code UK "ISO 3166-1 alpha-3"
+        string region "Asia|Europe|Africa..."
+        string subregion
+        number population
+    }
+
+    INDICATORS ||--o{ PRICES : "measures"
+    INDICATORS {
+        ObjectId _id PK
+        string name UK
+        string category "CPI|Inflation|Wage"
+        string description
+        string unit "USD|%|Index"
+        date createdAt
+    }
+
+    PRICES {
+        ObjectId _id PK
+        ObjectId indicator_id FK
+        ObjectId country_id FK
+        number year
+        number month "1-12 optional"
+        number value
+        object metadata "source + reliability"
+        date createdAt
+        date updatedAt
+    }
+```
+
+### 📈 Compound Indexing Strategy
+
+To handle **190,000+ records** at scale with `O(log n)` lookup performance:
+
+| Index | Purpose | Query Pattern |
+| :--- | :--- | :--- |
+| `{ country: 1, year: -1 }` | Timeline lookups per country | Historical trend charts |
+| `{ indicator: 1, country: 1 }` | Distribution grouping | Comparative analytics |
+| `{ year: 1, month: 1 }` | Seasonality queries | Monthly average pipelines |
+| `{ value: -1 }` | Top/bottom value sorts | Trending & high-value filters |
 
 ```javascript
-const priceSchema = new mongoose.Schema(
-  {
-    indicator: { type: String, required: true, index: true },
-    country: { type: String, required: true, index: true },
-    year: { type: Number, required: true },
-    value: { type: Number, required: true },
-    metadata: {
-      source: String,
-      reliability: Number,
-    },
-  },
-  { timestamps: true },
-);
-
-// Compound indexing for rapid analytical lookups
-priceSchema.index({ country: 1, year: -1 });
+// Applied on the Price Mongoose schema
+priceSchema.index({ country: 1, year: -1 });       // Geo-temporal lookups
+priceSchema.index({ indicator: 1, country: 1 });    // Distribution clustering
+priceSchema.index({ year: 1, month: 1 });           // Seasonality pipelines
+priceSchema.index({ value: -1 });                   // Top-N value sorting
 ```
 
 ---
