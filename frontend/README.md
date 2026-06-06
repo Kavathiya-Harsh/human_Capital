@@ -86,6 +86,33 @@ sequenceDiagram
 
 ---
 
+## 📈 Frontend UI & Business Workflow
+
+The client application provides a highly visual, step-by-step data analysis journey for end-users:
+
+```mermaid
+graph LR
+    A[Login / RBAC Auth] --> B[Dashboard Interface]
+    B --> C[Select Indicator]
+    C --> D[Apply Data Filters]
+    D --> E[Redux Data Thunk]
+    E --> F[Recharts Rendering]
+    F --> G[Export & Share]
+
+    classDef default fill:#1e293b,stroke:#475569,stroke-width:1px,color:#f8fafc;
+    classDef auth fill:#2563eb,stroke:#1d4ed8,stroke-width:1px,color:#fff;
+    classDef view fill:#8b5cf6,stroke:#7c3aed,stroke-width:1px,color:#fff;
+    classDef state fill:#d97706,stroke:#b45309,stroke-width:1px,color:#fff;
+    classDef success fill:#059669,stroke:#047857,stroke-width:1px,color:#fff;
+
+    class A auth;
+    class B,C,D view;
+    class E state;
+    class F,G success;
+```
+
+---
+
 ## 🌌 System Capabilities
 
 This application acts as a secure control center for analyzing global economic intelligence. Key client-side modules include:
