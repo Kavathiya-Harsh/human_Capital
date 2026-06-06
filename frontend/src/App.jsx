@@ -25,114 +25,229 @@ const AppContent = () => {
   const theme = useMemo(() => {
     const isDark = themeMode === 'dark';
 
-    // Core Palettes (Neumorphic identical background & surfaces)
-    const bgDefault = isDark ? '#151A26' : '#E6ECF5';
-    const bgPaper = isDark ? '#151A26' : '#E6ECF5';
-    const textPrimary = isDark ? '#F8FAFC' : '#1E293B';
-    const textSecondary = isDark ? '#94A3B8' : '#475569';
-    const primaryColor = isDark ? '#FF6038' : '#FF6038'; // Coral gradient orange primary
-    const secondaryColor = isDark ? '#00E5FF' : '#00BACF'; // Neon cyan secondary
+    /* ── Palette ──
+       Dark  → premium dark neumorphism  (#0f1117 bg / #1a1f2e cards)
+       Light → original coral/cyan neumorphism  (#E6ECF5)
+    ── */
+    const bgDefault      = isDark ? '#0f1117'  : '#E6ECF5';
+    // Cards need to be CLEARLY different from bg: #1a1f2e vs #0f1117 = good contrast
+    const bgPaper        = isDark ? '#1a1f2e'  : '#E6ECF5';
+    const textPrimary    = isDark ? '#f0f4ff'  : '#1E293B';
+    const textSecondary  = isDark ? '#8899bb'  : '#475569';
+    // Dark: blue-purple accent | Light: original coral-orange
+    const primaryColor   = isDark ? '#3b82f6'  : '#FF6038';
+    const secondaryColor = isDark ? '#8b5cf6'  : '#00BACF';
 
-    // Complex Neumorphism Shadows matching E6ECF5 (Light) and 151A26 (Dark)
-    const isNeu = appearance.neumorphism !== false;
+    /* ── Shadow system ──
+       Dark  → deep black outer + white micro-highlight (more pronounced for visibility)
+       Light → original soft beige neumorphic pair
+    ── */
+    const neuOuter = isDark
+      ? '0 8px 32px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)'
+      : '9px 9px 18px #b8c1cf, -9px -9px 18px #ffffff';
 
-    const neuShadow = isNeu
-      ? (isDark ? '9px 9px 18px #0c0f16, -9px -9px 18px #1e2536' : '8px 8px 16px #b8c1cf, -8px -8px 16px #ffffff')
-      : (isDark ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.05)');
+    const neuOuterSm = isDark
+      ? '0 4px 16px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.4)'
+      : '4px 4px 8px #b8c1cf, -4px -4px 8px #ffffff';
 
-    const neuShadowSm = isNeu
-      ? (isDark ? '4px 4px 8px #0c0f16, -4px -4px 8px #1e2536' : '4px 4px 8px #b8c1cf, -4px -4px 8px #ffffff')
-      : (isDark ? '0 2px 6px rgba(0,0,0,0.3)' : '0 2px 6px rgba(0,0,0,0.05)');
-
-    const neuShadowHover = isNeu
-      ? (isDark ? '14px 14px 28px #0c0f16, -14px -14px 28px #1e2536' : '14px 14px 28px #b8c1cf, -14px -14px 28px #ffffff')
-      : (isDark ? '0 8px 24px rgba(0,0,0,0.4)' : '0 8px 24px rgba(0,0,0,0.1)');
+    const neuOuterHover = isDark
+      ? '0 16px 48px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)'
+      : '14px 14px 28px #b8c1cf, -14px -14px 28px #ffffff';
 
     return createTheme({
       palette: {
         mode: themeMode,
-        primary: { main: primaryColor },
-        secondary: { main: secondaryColor },
-        warning: { main: '#FF6B35' },
-        background: {
-          default: bgDefault,
-          paper: bgPaper,
-        },
-        text: {
-          primary: textPrimary,
-          secondary: textSecondary,
-        },
+        primary:    { main: primaryColor },
+        secondary:  { main: secondaryColor },
+        success:    { main: '#10b981' },
+        warning:    { main: isDark ? '#f59e0b' : '#FF6B35' },
+        error:      { main: '#ef4444' },
+        info:       { main: '#06b6d4' },
+        background: { default: bgDefault, paper: bgPaper },
+        text:       { primary: textPrimary, secondary: textSecondary },
+        divider:    isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
       },
       typography: {
         fontFamily: '"Inter", "Poppins", "Sora", sans-serif',
-        h4: { fontWeight: 700, letterSpacing: '-0.02em' },
-        h6: { fontWeight: 600 },
-        subtitle2: { fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' },
-        button: { textTransform: 'none', fontWeight: 600, letterSpacing: '0.02em' },
+        h1: { fontWeight: 900, letterSpacing: '-0.04em' },
+        h2: { fontWeight: 800, letterSpacing: '-0.03em' },
+        h3: { fontWeight: 800, letterSpacing: '-0.025em' },
+        h4: { fontWeight: 800, letterSpacing: '-0.02em' },
+        h5: { fontWeight: 700, letterSpacing: '-0.015em' },
+        h6: { fontWeight: 700, letterSpacing: '-0.01em' },
+        subtitle1: { fontWeight: 600 },
+        subtitle2: { fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', fontSize: '0.72rem' },
+        body1: { fontWeight: 400, lineHeight: 1.65 },
+        body2: { fontWeight: 400, lineHeight: 1.6 },
+        caption: { fontWeight: 600, letterSpacing: '0.02em' },
+        button: { textTransform: 'none', fontWeight: 700, letterSpacing: '0.02em' },
       },
-      shape: {
-        borderRadius: 16,
-      },
+      shape: { borderRadius: 20 },
       components: {
         MuiCssBaseline: {
           styleOverrides: {
             body: {
+              backgroundColor: bgDefault,
               transition: 'background-color 0.4s ease, color 0.4s ease',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale',
             },
           },
         },
+
+        /* ── Paper (cards) ── */
         MuiPaper: {
           styleOverrides: {
             root: {
-              backgroundImage: 'none', // Removes default MUI dark mode overlay
-              boxShadow: neuShadow,
-              transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // Bouncy transition
+              backgroundImage: 'none',
+              backgroundColor: bgPaper,
+              // Border: much more visible in dark mode for card definition
+              border: isDark ? '1px solid rgba(255,255,255,0.10)' : 'none',
+              transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             },
-            elevation1: {
-              boxShadow: neuShadowSm,
-            },
+            elevation0: { boxShadow: 'none' },
+            elevation1: { boxShadow: neuOuterSm },
             elevation2: {
-              boxShadow: neuShadow,
+              boxShadow: neuOuter,
               '&:hover': {
-                boxShadow: neuShadowHover,
-                transform: 'translateY(-3px)',
+                boxShadow: neuOuterHover,
+                transform: isDark ? 'translateY(-4px) scale(1.005)' : 'translateY(-3px)',
               },
+            },
+            elevation3: { boxShadow: neuOuterHover },
+          },
+        },
+
+        /* ── AppBar (topbar) ── */
+        MuiAppBar: {
+          styleOverrides: {
+            root: {
+              backgroundImage: 'none',
+              backgroundColor: isDark ? 'rgba(15,17,23,0.85)' : 'rgba(230,236,245,0.8)',
+              backdropFilter: 'blur(24px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+              // Border: dark only — light has no bottom border (original)
+              borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : 'none',
+              boxShadow: isDark
+                ? '0 4px 24px rgba(0,0,0,0.5)'
+                : '0 4px 30px rgba(31,38,135,0.03)',
             },
           },
         },
+
+        /* ── Drawer (sidebar) ── */
+        MuiDrawer: {
+          styleOverrides: {
+            paper: {
+              backgroundImage: 'none',
+              backgroundColor: isDark ? '#0d0f14' : '#E6ECF5',
+              // No border on light — original style
+              borderRight: isDark ? '1px solid rgba(255,255,255,0.05)' : 'none',
+              boxShadow: isDark
+                ? '4px 0 32px rgba(0,0,0,0.6)'
+                : '4px 0 24px #d1d9e6',
+            },
+          },
+        },
+
+        /* ── Buttons ── */
         MuiButton: {
           styleOverrides: {
             root: {
               borderRadius: 12,
               padding: '10px 24px',
+              fontWeight: 700,
               transition: 'all 0.3s ease',
             },
             contained: {
-              boxShadow: neuShadowSm,
+              // Dark: blue-purple gradient | Light: original coral neumorphic
+              ...(isDark ? {
+                background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                boxShadow: '0 4px 16px rgba(59,130,246,0.4)',
+                '&:hover': {
+                  boxShadow: '0 8px 24px rgba(59,130,246,0.5)',
+                  transform: 'translateY(-2px)',
+                },
+              } : {
+                boxShadow: neuOuterSm,
+                '&:hover': {
+                  boxShadow: neuOuter,
+                  transform: 'translateY(-1px)',
+                },
+              }),
+            },
+            outlined: {
+              borderColor: isDark ? 'rgba(255,255,255,0.15)' : undefined,
               '&:hover': {
-                boxShadow: neuShadow,
-                transform: 'translateY(-1px)',
+                borderColor: primaryColor,
+                backgroundColor: isDark ? 'rgba(59,130,246,0.08)' : undefined,
               },
             },
           },
         },
-        MuiAppBar: {
+
+        /* ── Icon Buttons ── */
+        MuiIconButton: {
           styleOverrides: {
             root: {
-              boxShadow: isDark
-                ? '0 4px 30px rgba(0, 0, 0, 0.15)'
-                : '0 4px 30px rgba(31, 38, 135, 0.03)',
-              backdropFilter: 'blur(16px)',
-              backgroundColor: isDark ? 'rgba(21, 26, 38, 0.8)' : 'rgba(230, 236, 245, 0.8)',
+              borderRadius: 14,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+                transform: 'scale(1.1)',
+              },
             },
           },
         },
-        MuiDrawer: {
+
+        /* ── Chip ── */
+        MuiChip: {
           styleOverrides: {
-            paper: {
-              backgroundColor: bgDefault,
-              borderRight: 'none',
-              boxShadow: isDark ? '4px 0 24px #080c16' : '4px 0 24px #d1d9e6',
+            root: {
+              borderRadius: 10,
+              fontWeight: 700,
+              fontSize: '0.7rem',
+            },
+          },
+        },
+
+        /* ── Tooltip ── */
+        MuiTooltip: {
+          styleOverrides: {
+            tooltip: {
+              backgroundColor: isDark ? '#1e2330' : '#1e293b',
+              color: '#f0f4ff',
+              borderRadius: 10,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            },
+          },
+        },
+
+        /* ── Table ── */
+        MuiTableCell: {
+          styleOverrides: {
+            root: {
+              borderColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+            },
+            head: {
+              fontWeight: 800,
+              fontSize: '0.72rem',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: textSecondary,
+            },
+          },
+        },
+
+        /* ── Linear Progress ── */
+        MuiLinearProgress: {
+          styleOverrides: {
+            root: {
+              borderRadius: 4,
+              backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
             },
           },
         },
