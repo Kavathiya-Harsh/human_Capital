@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /login
+Allow: /register
+Disallow: /dashboard
+Disallow: /analytics
+Disallow: /data
+Disallow: /users
+Disallow: /settings
+Disallow: /countries
+
+Sitemap: https://humancapital.io/sitemap.xml
