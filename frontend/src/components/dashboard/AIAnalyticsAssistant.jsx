@@ -39,7 +39,7 @@ const AIAnalyticsAssistant = () => {
         height: '100%',
         backgroundColor: 'background.paper',
         border: '1px solid',
-        borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+        borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.02)',
         display: 'flex',
         flexDirection: 'column',
         minHeight: 480,
@@ -99,7 +99,7 @@ const AIAnalyticsAssistant = () => {
             color: activeTab === 'insights' ? 'primary.contrastText' : 'text.secondary',
             bgcolor: activeTab === 'insights' ? 'primary.main' : 'transparent',
             boxShadow: activeTab === 'insights' ? '0 4px 12px rgba(255, 96, 56, 0.2)' : 'none',
-            '&:hover': { bgcolor: activeTab === 'insights' ? 'primary.dark' : 'rgba(255,255,255,0.03)' }
+            '&:hover': { bgcolor: activeTab === 'insights' ? 'primary.dark' : 'rgba(255,255,255,0.10)' }
           }}
         >
           Insights
@@ -116,7 +116,7 @@ const AIAnalyticsAssistant = () => {
             color: activeTab === 'predictions' ? 'primary.contrastText' : 'text.secondary',
             bgcolor: activeTab === 'predictions' ? 'primary.main' : 'transparent',
             boxShadow: activeTab === 'predictions' ? '0 4px 12px rgba(255, 96, 56, 0.2)' : 'none',
-            '&:hover': { bgcolor: activeTab === 'predictions' ? 'primary.dark' : 'rgba(255,255,255,0.03)' }
+            '&:hover': { bgcolor: activeTab === 'predictions' ? 'primary.dark' : 'rgba(255,255,255,0.10)' }
           }}
         >
           Trend Predictor

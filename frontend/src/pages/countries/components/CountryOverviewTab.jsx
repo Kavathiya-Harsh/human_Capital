@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper, Grid, Avatar, Button } from '@mui/material';
+import { Box, Typography, Paper, Avatar, Button } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -21,8 +21,16 @@ const CountryOverviewTab = ({ stats, liveTelemetryCount }) => {
 
   return (
     <>
-      {/* KPI Overview Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      {/* KPI Overview Cards — 5-column equal-width grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: 20,
+          marginBottom: 32,
+          width: '100%',
+        }}
+      >
         {[
           {
             title: 'Territories Monitored',
@@ -61,71 +69,72 @@ const CountryOverviewTab = ({ stats, liveTelemetryCount }) => {
             pulse: true,
           },
         ].map((kpi, idx) => (
-          <Grid item xs={12} sm={6} md={4} lg={2.4} key={idx}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3.5,
-                borderRadius: '28px',
-                boxShadow: cardShadow,
-                backgroundColor: 'background.paper',
-                border: '1px solid',
-                borderColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                minHeight: 180,
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                <Typography sx={{ fontSize: '0.85rem', color: 'text.secondary', fontWeight: '850' }}>
-                  {kpi.title}
+          <Paper
+            key={idx}
+            elevation={0}
+            sx={{
+              p: 3.5,
+              borderRadius: '28px',
+              boxShadow: cardShadow,
+              backgroundColor: 'background.paper',
+              border: '1px solid',
+              borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.01)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: 180,
+              position: 'relative',
+              overflow: 'hidden',
+              width: '100%',
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+              <Typography sx={{ fontSize: '0.85rem', color: 'text.secondary', fontWeight: '850' }}>
+                {kpi.title}
+              </Typography>
+              <Avatar
+                sx={{
+                  bgcolor: 'background.default',
+                  color: kpi.color,
+                  width: 48,
+                  height: 48,
+                  boxShadow: insetShadow,
+                }}
+              >
+                {kpi.icon}
+              </Avatar>
+            </Box>
+            <Box>
+              <Typography variant="h4" fontWeight="950" sx={{ letterSpacing: '-0.02em', mb: 1, color: 'text.primary' }}>
+                {kpi.value}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {kpi.pulse && (
+                  <Box
+                    sx={{
+                      width: 9,
+                      height: 9,
+                      borderRadius: '50%',
+                      bgcolor: '#4caf50',
+                      boxShadow: '0 0 10px #4caf50',
+                      animation: 'pulse 1.5s infinite',
+                      '@keyframes pulse': {
+                        '0%': { transform: 'scale(0.95)', opacity: 0.8 },
+                        '50%': { transform: 'scale(1.3)', opacity: 1 },
+                        '100%': { transform: 'scale(0.95)', opacity: 0.8 },
+                      },
+                    }}
+                  />
+                )}
+                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', fontWeight: '650' }}>
+                  {kpi.subtitle}
                 </Typography>
-                <Avatar
-                  sx={{
-                    bgcolor: 'background.default',
-                    color: kpi.color,
-                    width: 48,
-                    height: 48,
-                    boxShadow: insetShadow,
-                  }}
-                >
-                  {kpi.icon}
-                </Avatar>
               </Box>
-              <Box>
-                <Typography variant="h4" fontWeight="950" sx={{ letterSpacing: '-0.02em', mb: 1, color: 'text.primary' }}>
-                  {kpi.value}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {kpi.pulse && (
-                    <Box
-                      sx={{
-                        width: 9,
-                        height: 9,
-                        borderRadius: '50%',
-                        bgcolor: '#4caf50',
-                        boxShadow: '0 0 10px #4caf50',
-                        animation: 'pulse 1.5s infinite',
-                        '@keyframes pulse': {
-                          '0%': { transform: 'scale(0.95)', opacity: 0.8 },
-                          '50%': { transform: 'scale(1.3)', opacity: 1 },
-                          '100%': { transform: 'scale(0.95)', opacity: 0.8 },
-                        },
-                      }}
-                    />
-                  )}
-                  <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', fontWeight: '650' }}>
-                    {kpi.subtitle}
-                  </Typography>
-                </Box>
-              </Box>
-            </Paper>
-          </Grid>
+            </Box>
+          </Paper>
         ))}
-      </Grid>
+      </div>
+
 
       {/* Neural Recommendations Banner */}
       <Box sx={{ mb: 4 }}>
@@ -140,12 +149,19 @@ const CountryOverviewTab = ({ stats, liveTelemetryCount }) => {
             boxShadow: cardShadow,
             backgroundColor: 'background.paper',
             border: '1px solid',
-            borderColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+            borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.01)',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
-          <Grid container spacing={4}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 32,
+              width: '100%',
+            }}
+          >
             {[
               {
                 title: 'Growth Vector Spark',
@@ -163,15 +179,12 @@ const CountryOverviewTab = ({ stats, liveTelemetryCount }) => {
                 status: 'Optimal',
               },
             ].map((insight, index) => (
-              <Grid
-                item
-                xs={12}
-                md={4}
+              <Box
                 key={index}
                 sx={{
-                  borderRight: { xs: 'none', md: index < 2 ? '1px solid' : 'none' },
-                  borderColor: isDark ? 'rgba(255,255,255,0.04) !important' : 'rgba(0,0,0,0.03) !important',
-                  pr: { xs: 0, md: index < 2 ? 4 : 0 },
+                  borderRight: index < 2 ? '1px solid' : 'none',
+                  borderColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                  pr: index < 2 ? 4 : 0,
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
@@ -197,9 +210,9 @@ const CountryOverviewTab = ({ stats, liveTelemetryCount }) => {
                     {insight.text}
                   </Typography>
                 </Box>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </div>
 
           {!isRecommendationsEnabled && (
             <Box

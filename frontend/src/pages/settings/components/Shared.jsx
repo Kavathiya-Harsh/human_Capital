@@ -47,7 +47,7 @@ export const ToggleRow = ({ icon, title, subtitle, checked, onChange, accentColo
       sx={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         p: 2, borderRadius: '16px',
-        background: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)'),
+        background: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.015)'),
         border: isNeu ? 'none' : '1px solid', 
         borderColor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
         boxShadow: isNeu ? (isDark ? 'inset 4px 4px 8px #080c16, inset -4px -4px 8px #1e2536' : 'inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff') : 'none',
@@ -96,7 +96,7 @@ export const SessionCard = ({ device, location, time, current, isDark, isNeu }) 
     sx={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       p: 2, borderRadius: '14px', mb: 1.5,
-      background: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)'),
+      background: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.015)'),
       border: isNeu ? 'none' : '1px solid', 
       borderColor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)'),
       boxShadow: isNeu ? (isDark ? 'inset 4px 4px 8px #080c16, inset -4px -4px 8px #1e2536' : 'inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff') : 'none',

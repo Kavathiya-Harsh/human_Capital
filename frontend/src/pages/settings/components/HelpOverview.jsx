@@ -33,7 +33,7 @@ const HelpOverview = () => {
         <Grid item xs={12} md={4}>
           <Box sx={{
             p: 3, borderRadius: '20px', height: '100%',
-            bgcolor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
+            bgcolor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.02)'),
             boxShadow: isNeu ? (isDark ? 'inset 4px 4px 8px #080c16, inset -4px -4px 8px #1e2536' : 'inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff') : 'none',
             border: isNeu ? 'none' : '1px solid divider',
           }}>
@@ -46,7 +46,7 @@ const HelpOverview = () => {
         <Grid item xs={12} md={4}>
           <Box sx={{
             p: 3, borderRadius: '20px', height: '100%',
-            bgcolor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
+            bgcolor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.02)'),
             boxShadow: isNeu ? (isDark ? 'inset 4px 4px 8px #080c16, inset -4px -4px 8px #1e2536' : 'inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff') : 'none',
             border: isNeu ? 'none' : '1px solid divider',
           }}>
@@ -59,7 +59,7 @@ const HelpOverview = () => {
         <Grid item xs={12} md={4}>
           <Box sx={{
             p: 3, borderRadius: '20px', height: '100%',
-            bgcolor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)'),
+            bgcolor: isNeu ? 'transparent' : (isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.02)'),
             boxShadow: isNeu ? (isDark ? 'inset 4px 4px 8px #080c16, inset -4px -4px 8px #1e2536' : 'inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff') : 'none',
             border: isNeu ? 'none' : '1px solid divider',
           }}>

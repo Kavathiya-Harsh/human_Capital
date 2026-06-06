@@ -30,7 +30,7 @@ export const TableSkeleton = ({ rows = 5 }) => {
             p: 2.2,
             borderRadius: '16px',
             boxShadow: styles.innerShadow,
-            backgroundColor: isDark ? 'rgba(255,255,255,0.01)' : 'rgba(0,0,0,0.01)',
+            backgroundColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.01)',
           }}
         >
           <SkeletonShimmer width="20%" height="18px" />

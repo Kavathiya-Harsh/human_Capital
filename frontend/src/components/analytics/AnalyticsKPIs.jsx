@@ -62,82 +62,84 @@ const AnalyticsKPIs = ({ analyticsData, loading }) => {
   ];
 
   return (
-    <Grid container spacing={3} sx={{ mb: 4 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginBottom: 32, width: '100%' }}>
       {items.map((item, index) => {
         const Icon = item.icon;
         return (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              whileHover={{ y: -4, scale: 1.01 }}
+          <motion.div
+            key={index}
+            className="w-full h-full"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+            whileHover={{ y: -4, scale: 1.01 }}
+          >
+            <Paper
+              elevation={2}
+              sx={{
+                p: 3,
+                borderRadius: '24px',
+                backgroundColor: 'background.paper',
+                position: 'relative',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1.5,
+                minHeight: 155,
+                height: '100%',
+                width: '100%',
+              }}
             >
-              <Paper
-                elevation={2}
+              {/* Decorative Background Glow */}
+              <Box
                 sx={{
-                  p: 3,
-                  borderRadius: '24px',
-                  backgroundColor: 'background.paper',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1.5,
-                  minHeight: 145
+                  position: 'absolute',
+                  top: -20,
+                  right: -20,
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  background: `radial-gradient(circle, ${item.color}15 0%, transparent 70%)`,
+                  zIndex: 0
                 }}
-              >
-                {/* Decorative Background Glow */}
+              />
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 1 }}>
+                <Typography variant="caption" color="text.secondary" fontWeight="800" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {item.title}
+                </Typography>
                 <Box
                   sx={{
-                    position: 'absolute',
-                    top: -20,
-                    right: -20,
-                    width: 80,
-                    height: 80,
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${item.color}15 0%, transparent 70%)`,
-                    zIndex: 0
+                    p: 1,
+                    borderRadius: '12px',
+                    bgcolor: isNeu ? 'transparent' : `${item.color}12`,
+                    color: item.color,
+                    display: 'flex',
+                    boxShadow: isNeu ? (isDark ? 'inset 2px 2px 4px #0c0f16, inset -2px -2px 4px #1e2536' : 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff') : 'none',
                   }}
-                />
-
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 1 }}>
-                  <Typography variant="caption" color="text.secondary" fontWeight="800" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {item.title}
-                  </Typography>
-                  <Box
-                    sx={{
-                      p: 1,
-                      borderRadius: '12px',
-                      bgcolor: isNeu ? 'transparent' : `${item.color}12`,
-                      color: item.color,
-                      display: 'flex',
-                      boxShadow: isNeu ? (isDark ? 'inset 2px 2px 4px #0c0f16, inset -2px -2px 4px #1e2536' : 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff') : 'none',
-                    }}
-                  >
-                    <Icon size={16} />
-                  </Box>
+                >
+                  <Icon size={16} />
                 </Box>
+              </Box>
 
-                <Box sx={{ zIndex: 1 }}>
-                  <Typography variant="h5" fontWeight="950" color="text.primary" sx={{ letterSpacing: '-0.02em', mb: 0.5 }}>
-                    {loading ? '...' : item.value}
+              <Box sx={{ zIndex: 1 }}>
+                <Typography variant="h5" fontWeight="950" color="text.primary" sx={{ letterSpacing: '-0.02em', mb: 0.5 }}>
+                  {loading ? '...' : item.value}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="caption" fontWeight="800" sx={{ color: item.color }}>
+                    {item.change}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="caption" fontWeight="800" sx={{ color: item.color }}>
-                      {item.change}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.68rem', fontWeight: 500 }}>
-                      {item.desc}
-                    </Typography>
-                  </Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.68rem', fontWeight: 500 }}>
+                    {item.desc}
+                  </Typography>
                 </Box>
-              </Paper>
-            </motion.div>
-          </Grid>
+              </Box>
+            </Paper>
+          </motion.div>
         );
       })}
-    </Grid>
+    </div>
   );
 };
 

@@ -22,7 +22,7 @@ const DonutChartWrapper = ({ title, data, dataKeyName, dataKeyValue }) => {
           height: '100%',
           backgroundColor: 'background.paper',
           border: '1px solid',
-          borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+          borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.02)',
         }}
       >
         <Typography variant="h6" fontWeight="800" sx={{ letterSpacing: '-0.01em' }}>

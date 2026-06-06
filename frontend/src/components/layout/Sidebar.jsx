@@ -1,31 +1,23 @@
 import React from 'react';
 import {
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  useTheme,
-  Typography,
+  Box, Drawer, List, ListItem, ListItemButton,
+  ListItemIcon, ListItemText, Toolbar, useTheme, Typography,
 } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { FiHome, FiBarChart2, FiGlobe, FiSettings, FiUsers, FiDatabase } from 'react-icons/fi';
+import { FiHome, FiBarChart2, FiGlobe, FiSettings, FiUsers, FiDatabase, FiZap } from 'react-icons/fi';
 import { setSidebarOpen } from '../../features/uiSlice';
 import { motion } from 'framer-motion';
 
-const drawerWidth = 260; // Slightly wider for elegance
+const drawerWidth = 264;
 
 const menuItems = [
-  { text: 'Dashboard', icon: <FiHome />, path: '/dashboard' },
-  { text: 'Analytics', icon: <FiBarChart2 />, path: '/analytics' },
-  { text: 'Data Grid', icon: <FiDatabase />, path: '/data' },
-  { text: 'Users', icon: <FiUsers />, path: '/users' },
-  { text: 'Countries', icon: <FiGlobe />, path: '/countries' },
-  { text: 'Settings', icon: <FiSettings />, path: '/settings' },
+  { text: 'Dashboard',  icon: <FiHome size={18} />,     path: '/dashboard', color: '#3b82f6' },
+  { text: 'Analytics',  icon: <FiBarChart2 size={18} />, path: '/analytics', color: '#8b5cf6' },
+  { text: 'Data Grid',  icon: <FiDatabase size={18} />,  path: '/data',      color: '#06b6d4' },
+  { text: 'Users',      icon: <FiUsers size={18} />,     path: '/users',     color: '#10b981' },
+  { text: 'Countries',  icon: <FiGlobe size={18} />,     path: '/countries', color: '#f59e0b' },
+  { text: 'Settings',   icon: <FiSettings size={18} />,  path: '/settings',  color: '#ec4899' },
 ];
 
 const Sidebar = () => {
@@ -38,61 +30,154 @@ const Sidebar = () => {
     dispatch(setSidebarOpen(!sidebarOpen));
   };
 
+  /* ── shadow tokens (mode-aware) ── */
+  const outerShadow = isDark
+    ? '4px 4px 10px rgba(0,0,0,0.6), -2px -2px 6px rgba(255,255,255,0.04)'
+    : '4px 4px 8px #b8c1cf, -4px -4px 8px #ffffff';
+
   const activeShadow = isDark
-    ? 'inset 4px 4px 8px #0c0f16, inset -4px -4px 8px #1e2536'
+    ? 'inset 3px 3px 7px rgba(0,0,0,0.55), inset -2px -2px 5px rgba(255,255,255,0.04)'
     : 'inset 4px 4px 8px #b8c1cf, inset -4px -4px 8px #ffffff';
 
   const drawer = (
-    <Box sx={{ px: 2 }}>
-      <Toolbar sx={{ mb: 2 }} />
-      <List>
-        {menuItems.map((item, index) => (
-          <motion.div
-            key={item.text}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <ListItem disablePadding sx={{ mb: 2 }}>
+    <Box sx={{ px: 2, py: 1, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Toolbar sx={{ mb: 1 }} />
+
+      {/* ── Nav section label ── */}
+      <Typography
+        sx={{
+          fontSize: '0.58rem',
+          fontWeight: 800,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: 'text.secondary',
+          px: 1.5,
+          mb: 2,
+          mt: 0.5,
+        }}
+      >
+        Navigation
+      </Typography>
+
+      <List sx={{ flex: 1 }}>
+        {menuItems.map((item, i) => (
+          <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+            <motion.div
+              style={{ width: '100%' }}
+              whileHover={{ x: 2 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
               <ListItemButton
                 component={NavLink}
                 to={item.path}
-                onClick={() => {
-                  if (window.innerWidth < 600) handleDrawerToggle();
-                }}
+                onClick={() => { if (window.innerWidth < 600) handleDrawerToggle(); }}
                 sx={{
-                  borderRadius: 3,
-                  py: 1.5,
-                  transition: 'all 0.3s ease',
+                  borderRadius: '18px',
+                  py: 1.4,
+                  px: 2,
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  position: 'relative',
+                  overflow: 'hidden',
+
+                  /* default — raised neumorphic */
+                  bgcolor: 'transparent',
+                  boxShadow: outerShadow,
+                  border: isDark
+                    ? '1px solid rgba(255,255,255,0.05)'
+                    : '1px solid rgba(0,0,0,0.04)',
+
                   '&.active': {
                     bgcolor: 'transparent',
-                    boxShadow: activeShadow, // Pressed neumorphic effect
-                    color: 'primary.main',
-                    '& .MuiListItemIcon-root': { color: 'primary.main' },
+                    boxShadow: activeShadow,
+                    border: isDark ? `1px solid ${item.color}22` : 'none',
+                    '& .MuiListItemIcon-root': { color: item.color },
+                    '& .MuiListItemText-primary': { color: item.color },
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: '15%',
+                      bottom: '15%',
+                      width: 3,
+                      borderRadius: '0 3px 3px 0',
+                      background: item.color,
+                      boxShadow: isDark ? `0 0 10px ${item.color}` : 'none',
+                    },
                   },
+
                   '&:hover:not(.active)': {
-                    bgcolor: 'transparent',
-                    transform: 'translateY(-2px)',
+                    bgcolor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.01)',
                     boxShadow: isDark
-                      ? '4px 4px 8px #0c0f16, -4px -4px 8px #1e2536'
-                      : '4px 4px 8px #b8c1cf, -4px -4px 8px #ffffff',
+                      ? `6px 6px 14px rgba(0,0,0,0.65), -3px -3px 8px rgba(255,255,255,0.05), 0 0 20px ${item.color}20`
+                      : '6px 6px 14px #b8c1cf, -6px -6px 14px #ffffff',
+                    '& .MuiListItemIcon-root': { color: item.color },
                   },
                 }}
               >
-                <ListItemIcon sx={{ color: 'text.secondary', minWidth: 46 }}>
+                <ListItemIcon
+                  sx={{
+                    color: 'text.secondary',
+                    minWidth: 40,
+                    transition: 'color 0.3s ease',
+                  }}
+                >
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: 600, color: 'inherit' }}>{item.text}</Typography>} />
+                <ListItemText
+                  primary={
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: '0.88rem',
+                        letterSpacing: '-0.01em',
+                        color: 'inherit',
+                        transition: 'color 0.3s ease',
+                      }}
+                    >
+                      {item.text}
+                    </Typography>
+                  }
+                />
               </ListItemButton>
-            </ListItem>
-          </motion.div>
+            </motion.div>
+          </ListItem>
         ))}
       </List>
+
+      {/* ── Footer branding ── */}
+      <Box
+        sx={{
+          mx: 1,
+          mb: 2,
+          p: 2,
+          borderRadius: '18px',
+          background: isDark
+            ? 'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08))'
+            : 'linear-gradient(135deg, rgba(37,99,235,0.06), rgba(124,58,237,0.06))',
+          border: isDark
+            ? '1px solid rgba(59,130,246,0.15)'
+            : '1px solid rgba(37,99,235,0.12)',
+          boxShadow: isDark
+            ? 'inset 2px 2px 5px rgba(0,0,0,0.4), inset -1px -1px 3px rgba(255,255,255,0.10)'
+            : 'inset 2px 2px 5px #b8c1cf, inset -2px -2px 5px #ffffff',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+          <FiZap size={13} color="#3b82f6" />
+          <Typography sx={{ fontSize: '0.7rem', fontWeight: 800, color: '#3b82f6', letterSpacing: '0.04em' }}>
+            HC Analytics
+          </Typography>
+        </Box>
+        <Typography sx={{ fontSize: '0.6rem', color: 'text.secondary', fontWeight: 600, lineHeight: 1.4 }}>
+          Enterprise Intelligence v2.0
+        </Typography>
+      </Box>
     </Box>
   );
 
   return (
     <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+      {/* Mobile drawer */}
       <Drawer
         variant="temporary"
         open={sidebarOpen}
@@ -105,6 +190,8 @@ const Sidebar = () => {
       >
         {drawer}
       </Drawer>
+
+      {/* Desktop permanent drawer */}
       <Drawer
         variant="permanent"
         sx={{
