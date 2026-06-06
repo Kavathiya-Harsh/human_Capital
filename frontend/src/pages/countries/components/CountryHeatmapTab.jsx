@@ -24,7 +24,7 @@ const CountryHeatmapTab = () => {
           boxShadow: cardShadow,
           backgroundColor: 'background.paper',
           border: '1px solid',
-          borderColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)',
+          borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.01)',
           height: 420,
           display: 'flex',
           alignItems: 'center',
@@ -82,7 +82,7 @@ const CountryHeatmapTab = () => {
           </svg>
         </Box>
 
-        <Box sx={{ position: 'absolute', bottom: 20, left: 20, right: 20, display: 'flex', justifyContent: 'space-between', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', p: 1.5, borderRadius: 3 }}>
+        <Box sx={{ position: 'absolute', bottom: 20, left: 20, right: 20, display: 'flex', justifyContent: 'space-between', bgcolor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.03)', p: 1.5, borderRadius: 3 }}>
           <Typography variant="body2" color="text.secondary" fontWeight="700">
             Map Projections: <strong>Mercator grid</strong>
           </Typography>
