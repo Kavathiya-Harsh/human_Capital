@@ -96,20 +96,20 @@ const Table = ({
                   sx={{
                     '& td': {
                       backgroundColor: 'background.paper',
-                      borderTop: isDark ? '1px solid rgba(255,255,255,0.02)' : '1px solid rgba(0,0,0,0.01)',
-                      borderBottom: isDark ? '1px solid rgba(255,255,255,0.02)' : '1px solid rgba(0,0,0,0.01)',
+                      borderTop: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.01)',
+                      borderBottom: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.01)',
                       boxShadow: rowShadow,
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       py: 2.2,
                       px: 3,
                     },
                     '& td:first-of-type': {
-                      borderLeft: isDark ? '1px solid rgba(255,255,255,0.02)' : '1px solid rgba(0,0,0,0.01)',
+                      borderLeft: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.01)',
                       borderTopLeftRadius: '16px',
                       borderBottomLeftRadius: '16px',
                     },
                     '& td:last-of-type': {
-                      borderRight: isDark ? '1px solid rgba(255,255,255,0.02)' : '1px solid rgba(0,0,0,0.01)',
+                      borderRight: isDark ? '1px solid rgba(255,255,255,0.10)' : '1px solid rgba(0,0,0,0.01)',
                       borderTopRightRadius: '16px',
                       borderBottomRightRadius: '16px',
                     },

@@ -1,106 +1,218 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppBar, Toolbar, Typography, IconButton, Box, Button } from '@mui/material';
-import { FiMenu, FiMoon, FiSun, FiLogOut, FiActivity } from 'react-icons/fi';
+import { AppBar, Toolbar, Typography, IconButton, Box, Button, Avatar, Chip } from '@mui/material';
+import { FiMenu, FiMoon, FiSun, FiLogOut, FiActivity, FiZap, FiBell } from 'react-icons/fi';
 import { toggleSidebar, toggleTheme } from '../../features/uiSlice';
 import { logout } from '../../features/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const Topbar = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch  = useDispatch();
+  const navigate  = useNavigate();
   const { themeMode } = useSelector((state) => state.ui);
-  const { user } = useSelector((state) => state.auth);
+  const { user }      = useSelector((state) => state.auth);
+  const isDark = themeMode === 'dark';
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
+  /* ── theme-aware shadow tokens ── */
+  const insetShadow = isDark
+    ? 'inset 3px 3px 7px rgba(0,0,0,0.6), inset -2px -2px 5px rgba(255,255,255,0.04)'
+    : 'inset 3px 3px 7px #b8c1cf, inset -3px -3px 7px #ffffff';
+
   return (
     <AppBar
       position="fixed"
+      elevation={0}
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        bgcolor: 'background.paper',
         color: 'text.primary',
-        borderBottom: 'none',
       }}
     >
-      <Toolbar sx={{ minHeight: '70px !important' }}>
+      <Toolbar sx={{ minHeight: '68px !important', px: { xs: 2, sm: 3 }, gap: 1.5 }}>
+
+        {/* Hamburger — mobile */}
         <IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={() => dispatch(toggleSidebar())}
-          sx={{ mr: 2, display: { sm: 'none' } }}
+          sx={{ display: { sm: 'none' }, mr: 0.5 }}
         >
           <FiMenu />
         </IconButton>
 
-        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+        {/* ── Brand ── */}
+        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 1.5 }}>
-            <FiActivity size={24} color="#FF6038" />
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                fontWeight: 800,
-                letterSpacing: '-0.03em',
-                background: `linear-gradient(45deg, #FF6038, #00E5FF)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
+            {/* Animated logo bubble */}
+            <motion.div
+              whileHover={{ scale: 1.08, rotate: 5 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
             >
-              Human Capital Analytics
-            </Typography>
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '14px',
+                  background: isDark
+                    ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)'
+                    : 'linear-gradient(45deg, #FF6038, #FF8C42)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: isDark
+                    ? '0 4px 16px rgba(59,130,246,0.45), inset 0 1px 0 rgba(255,255,255,0.15)'
+                    : '4px 4px 10px #b8c1cf, -4px -4px 10px #ffffff',
+                }}
+              >
+                <FiZap size={18} color="#fff" />
+              </Box>
+            </motion.div>
+
+            <Box>
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{
+                  fontWeight: 900,
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1,
+                  background: isDark
+                    ? 'linear-gradient(135deg, #f0f4ff 0%, #a78bfa 50%, #60a5fa 100%)'
+                    : 'linear-gradient(45deg, #FF6038, #00E5FF)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Human Capital Analytics
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: '0.6rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  color: isDark ? '#3b82f6' : '#FF6038',
+                  textTransform: 'uppercase',
+                  lineHeight: 1,
+                  mt: 0.2,
+                }}
+              >
+                Enterprise Intelligence Platform
+              </Typography>
+            </Box>
           </Box>
+
+          {/* Live status chip */}
+          <Chip
+            label="● LIVE"
+            size="small"
+            sx={{
+              display: { xs: 'none', lg: 'flex' },
+              height: 22,
+              fontSize: '0.6rem',
+              fontWeight: 900,
+              letterSpacing: '0.1em',
+              bgcolor: isDark ? 'rgba(16,185,129,0.12)' : 'rgba(16,185,129,0.1)',
+              color: '#10b981',
+              border: '1px solid rgba(16,185,129,0.3)',
+              '& .MuiChip-label': { px: 1 },
+            }}
+          />
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        {/* ── Right controls ── */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+
+          {/* User name */}
           <Typography
-            variant="subtitle2"
-            sx={{ display: { xs: 'none', md: 'block' }, color: 'text.secondary' }}
+            variant="caption"
+            sx={{
+              display: { xs: 'none', md: 'block' },
+              color: 'text.secondary',
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+            }}
           >
             {user?.name || 'Enterprise Admin'}
           </Typography>
 
-          <Box
+          {/* Notification bell */}
+          <IconButton
+            size="small"
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              bgcolor: 'background.default',
-              borderRadius: '20px',
-              p: 0.5,
-              boxShadow:
-                themeMode === 'dark'
-                  ? 'inset 2px 2px 4px #0c0f16, inset -2px -2px 4px #1e2536'
-                  : 'inset 2px 2px 4px #b8c1cf, inset -2px -2px 4px #ffffff',
+              display: { xs: 'none', sm: 'flex' },
+              width: 38,
+              height: 38,
+              borderRadius: '14px',
+              bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'background.default',
+              border: isDark ? '1px solid rgba(255,255,255,0.07)' : 'none',
+              boxShadow: isDark
+                ? '3px 3px 8px rgba(0,0,0,0.5), -2px -2px 5px rgba(255,255,255,0.04)'
+                : '4px 4px 8px #b8c1cf, -4px -4px 8px #ffffff',
+              color: 'text.secondary',
             }}
           >
-            <IconButton
+            <FiBell size={16} />
+          </IconButton>
+
+          {/* Theme toggle */}
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Box
               onClick={() => dispatch(toggleTheme())}
-              color={themeMode === 'light' ? 'primary' : 'inherit'}
-              sx={{ width: 36, height: 36 }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 38,
+                height: 38,
+                borderRadius: '14px',
+                cursor: 'pointer',
+                bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'background.default',
+                border: isDark ? '1px solid rgba(255,255,255,0.07)' : 'none',
+                boxShadow: isDark
+                  ? '3px 3px 8px rgba(0,0,0,0.5), -2px -2px 5px rgba(255,255,255,0.04)'
+                  : '4px 4px 8px #b8c1cf, -4px -4px 8px #ffffff',
+                color: isDark ? '#f59e0b' : 'text.secondary',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: isDark
+                    ? '0 0 16px rgba(245,158,11,0.4), 3px 3px 8px rgba(0,0,0,0.5)'
+                    : 'inset 4px 4px 8px #b8c1cf, inset -4px -4px 8px #ffffff',
+                },
+              }}
             >
-              {themeMode === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
-            </IconButton>
-          </Box>
+              {isDark ? <FiSun size={17} /> : <FiMoon size={17} />}
+            </Box>
+          </motion.div>
 
-          <Button
-            color="primary"
-            variant="contained"
-            size="medium"
-            onClick={handleLogout}
-            startIcon={<FiLogOut />}
-            sx={{ borderRadius: '20px', px: 3, display: { xs: 'none', sm: 'flex' } }}
-          >
-            Logout
-          </Button>
+          {/* Logout button */}
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+            <Button
+              color="primary"
+              variant="contained"
+              size="small"
+              onClick={handleLogout}
+              startIcon={<FiLogOut size={14} />}
+              sx={{
+                display: { xs: 'none', sm: 'flex' },
+                borderRadius: '14px',
+                px: 2.5,
+                py: 1,
+                fontSize: '0.78rem',
+                fontWeight: 800,
+              }}
+            >
+              Logout
+            </Button>
+          </motion.div>
 
-          {/* Mobile Logout Icon */}
+          {/* Mobile logout icon */}
           <IconButton
             color="error"
             onClick={handleLogout}
