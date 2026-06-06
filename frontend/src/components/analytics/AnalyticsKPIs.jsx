@@ -68,6 +68,7 @@ const AnalyticsKPIs = ({ analyticsData, loading }) => {
         return (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <motion.div
+              style={{ width: '100%' }}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}

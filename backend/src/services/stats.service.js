@@ -118,8 +118,62 @@ const getTopIndicatorsService = async () => {
 };
 
 const getValueDistributionService = async () => {
-  // Ready for advanced $bucket aggregation logic
-  return { message: "Value distribution data" };
+  const rawBuckets = await Price.aggregate([
+    {
+      $bucket: {
+        groupBy: "$value",
+        boundaries: [0, 20, 50, 80, 110, 150],
+        default: "150+",
+        output: {
+          count: { $sum: 1 }
+        }
+      }
+    }
+  ]);
+
+  const rangeLabels = {
+    0: "0 - 20",
+    20: "20 - 50",
+    50: "50 - 80",
+    80: "80 - 110",
+    110: "110 - 150",
+    "150+": "150+"
+  };
+
+  const allRanges = [0, 20, 50, 80, 110];
+  const mapped = allRanges.map(bound => {
+    const found = rawBuckets.find(b => b._id === bound);
+    return {
+      range: rangeLabels[bound],
+      count: found ? found.count : 0
+    };
+  });
+
+  const defaultBucket = rawBuckets.find(b => b._id === "150+");
+  if (defaultBucket) {
+    mapped.push({
+      range: "150+",
+      count: defaultBucket.count
+    });
+  }
+
+  return mapped;
+};
+
+const getFrequencyDistributionService = async () => {
+  const rawFreq = await Price.aggregate([
+    {
+      $group: {
+        _id: "$frequency",
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+
+  return rawFreq.map(f => ({
+    name: f._id === "M" ? "Monthly" : f._id === "A" ? "Annual" : f._id || "Unknown",
+    value: f.count
+  }));
 };
 
 const getRecordsCountService = async () => {
@@ -168,6 +222,7 @@ module.exports = {
   getTopCountries: getTopCountriesService,
   getTopIndicators: getTopIndicatorsService,
   getValueDistribution: getValueDistributionService,
+  getFrequencyDistribution: getFrequencyDistributionService,
   getRecordsCount: getRecordsCountService,
   getTrendingStatistics: getTrendingStatisticsService,
   getOverviewStats: getOverviewStatsService,
