@@ -1,6 +1,5 @@
 User-agent: *
-Allow: /login
-Allow: /register
+Allow: /
 Disallow: /dashboard
 Disallow: /analytics
 Disallow: /data
@@ -8,4 +7,4 @@ Disallow: /users
 Disallow: /settings
 Disallow: /countries
 
-Sitemap: https://humancapital.io/sitemap.xml
+Sitemap: https://human-capital-project-sahoo-priyabr.vercel.app/sitemap.xml
