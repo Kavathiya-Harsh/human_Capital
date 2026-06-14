@@ -12,10 +12,18 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom', 'react-redux', '@reduxjs/toolkit'],
-          mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
-          recharts: ['recharts', 'framer-motion'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@mui') || id.includes('@emotion')) {
+              return 'mui';
+            }
+            if (id.includes('recharts') || id.includes('framer-motion')) {
+              return 'recharts';
+            }
+            if (id.includes('react') || id.includes('redux')) {
+              return 'vendor';
+            }
+          }
         }
       }
     }
