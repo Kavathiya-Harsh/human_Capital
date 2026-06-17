@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   build: {
+    outDir: 'build',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
