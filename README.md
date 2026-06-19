@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="./frontend/src/assets/logo.png" alt="Human Capital Analytics Logo" width="180" style="border-radius: 20px; margin-bottom: 20px;"/>
-
 # 📊 Human Capital Analytics | Full MERN Stack Platform
 
 **Enterprise-Level Dashboard & Predictive Analytics System for Global Economic Intelligence**
@@ -725,43 +723,6 @@ Distributed under the **MIT License**. See [LICENSE](file:///c:/Users/priyabrata
 </p>
 
 ---
-
-## 👨‍💻 Developer & Author
-
-<table align="center" style="border: none; background: transparent; border-collapse: collapse;">
-  <tr style="background: transparent; border: none;">
-    <td align="center" style="border: none; padding: 24px;">
-      <a href="https://github.com/priyabratasahoo780">
-        <img src="https://github.com/priyabratasahoo780.png" width="110" style="border-radius: 50%; border: 3px solid #ff6038; box-shadow: 0 10px 30px rgba(255,96,56,0.25);" alt="Priyabrata Sahoo" />
-      </a>
-      <br /><br />
-      <strong style="font-size: 1.25rem; color: #f8fafc;">Priyabrata Sahoo</strong>
-      <br />
-      <span style="color: #94a3b8; font-size: 0.95rem;">Full-Stack Software Engineer & Platform Architect</span>
-    </td>
-  </tr>
-  <tr style="background: transparent; border: none;">
-    <td align="center" style="border: none; padding-bottom: 24px;">
-      <a href="https://github.com/priyabratasahoo780" target="_blank">
-        <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Profile" />
-      </a>
-      &nbsp;&nbsp;
-      <a href="https://www.linkedin.com/in/priyabrata-sahoo/" target="_blank">
-        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Profile" />
-      </a>
-    </td>
-  </tr>
-</table>
-
----
-
-<div align="center">
-
-<h3>🚀 Deciphering the world's data, one record at a time.</h3>
-
-<br />
-
-<a href="#-human-capital-analytics--full-mern-stack-platform">
   <img src="https://img.shields.io/badge/Back_to_Top-ff6038?style=for-the-badge&logo=arrow-up&logoColor=white" alt="Back to Top" />
 </a>
 
